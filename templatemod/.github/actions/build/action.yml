@@ -16,7 +16,11 @@ runs:
         java-version: |
           21
           25
-    - uses: gradle/actions/setup-gradle@v5
+    - uses: gradle/actions/setup-gradle@v6
+      with:
+        # Keep basic. The default "enhanced" cache uses a proprietary component under separate
+        # terms of use. The basic cache is MIT (actions/cache).
+        cache-provider: basic
     - name: Gradle setup
       shell: bash
       working-directory: ${{ inputs.directory }}
