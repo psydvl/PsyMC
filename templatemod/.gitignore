@@ -1,0 +1,15 @@
+# Machine-local notes and scratch files of a person or an agent.
+.local/
+
+build/
+.gradle/
+.kotlin/
+.jdk/
+.mise/
+bin/
+out/
+run/
+logs/
+.idea/
+*.iml
+.vscode/

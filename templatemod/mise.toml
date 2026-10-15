@@ -1,0 +1,13 @@
+[tools]
+java = ["temurin-25", "temurin-21"]
+
+[tool_alias.java.versions]
+"25" = "temurin-25"
+"21" = "temurin-21"
+
+[env]
+# The Gradle client JVM and the nested Gradle runs of the smoke tasks: allow native access (JEP 472).
+GRADLE_OPTS = "--enable-native-access=ALL-UNNAMED"
+# Gradle finds toolchains in the asdf layout: <ASDF_DATA_DIR>/installs/java/*.
+# The mise data dir has the same layout, so Gradle sees every mise Java.
+ASDF_DATA_DIR = "{% if env.MISE_DATA_DIR is defined %}{{ env.MISE_DATA_DIR }}{% elif env.LOCALAPPDATA is defined %}{{ env.LOCALAPPDATA }}/mise{% else %}{{ env.HOME }}/.local/share/mise{% endif %}"

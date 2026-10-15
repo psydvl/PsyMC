@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "mixin_audit",
+  "version": "1.0.0",
+  "name": "Mixin audit",
+  "description": "Loads each mixin target of the mod once.",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.psydvl.mc.smoke.audit.MixinAuditFabric"]
+  }
+}

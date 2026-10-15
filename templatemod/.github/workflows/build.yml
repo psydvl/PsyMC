@@ -1,0 +1,13 @@
+# The workflow of a repository that holds only this mod. The steps are in .github/actions/build.
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build

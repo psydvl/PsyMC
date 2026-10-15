@@ -1,0 +1,9 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "All rights reserved"
+
+[[mods]]
+modId = "mixin_audit"
+version = "1.0.0"
+displayName = "Mixin audit"
+description = "Loads each mixin target of the mod once."

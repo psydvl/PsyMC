@@ -1,0 +1,9 @@
+# Expected mixinCheck misses. mixinCheck lists them with the reason and does not fail on them.
+# One entry per line:
+#   <loader or *> | <mixin class> | <text in the miss> | <reason>
+# A miss matches when the loader is equal (or *), the mixin class is equal, and the miss text
+# contains the text. An entry that matches nothing is listed as stale: remove it.
+#
+# Example: one hook per loader. NeoForge checks the reach with canReach, Fabric with distanceToSqr.
+#   neoforge | dev.psydvl.mc.example.mixin.PlayerReachMixin | finds no method | NeoForge checks the reach with canReach; this hook is for Fabric.
+#   fabric | dev.psydvl.mc.example.mixin.PlayerReachNeoMixin | finds no method | Fabric checks the reach with distanceToSqr; this hook is for NeoForge.

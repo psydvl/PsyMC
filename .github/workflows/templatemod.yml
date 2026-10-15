@@ -1,0 +1,22 @@
+# GitHub reads workflows only from the root .github/workflows. This one calls the build action of
+# templatemod, the same action that templatemod/.github/workflows/build.yml uses on its own.
+name: templatemod
+
+on:
+  push:
+    paths:
+      - templatemod/**
+      - .github/workflows/templatemod.yml
+  pull_request:
+    paths:
+      - templatemod/**
+      - .github/workflows/templatemod.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./templatemod/.github/actions/build
+        with:
+          directory: templatemod

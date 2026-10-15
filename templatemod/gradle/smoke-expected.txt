@@ -1,0 +1,16 @@
+# Known failures of versionSmoke, mixinAudit, and serverSmoke. A failed release here counts as
+# "expected" and does not fail the task. A release here that passes is reported: remove its entry.
+# One entry per line:
+#   <task or *> | <loader or *> | <release> | <reason, with a link>
+
+# HeadlessMc stubs MemoryUtil.getAllocator to null. 1.21.2 and 1.21.3 allocate in RenderSystem.<clinit>.
+# The plain vanilla client fails too; the Fabric and NeoForge launches start.
+versionSmoke | nil | 1.21.2 | HeadlessMc returns null from MemoryUtil.getAllocator: https://github.com/headlesshq/headlessmc/issues/471
+versionSmoke | nil | 1.21.3 | HeadlessMc returns null from MemoryUtil.getAllocator: https://github.com/headlesshq/headlessmc/issues/471
+
+# HeadlessMc: GLFWErrorCallback.create fails under the stubs (NullPointerException: descriptor is null).
+# 26.1.x checks the error callback in GLFWErrorScope.close and stops: "GLFW error callback has
+# unexpectedly changed during this scope". The plain vanilla client fails too; Fabric, NeoForge, and 26.2 start.
+versionSmoke | nil | 26.1 | HeadlessMc GLFW error callback stub; vanilla 26.1.x stops in GLFWErrorScope: https://github.com/headlesshq/headlessmc/issues/472
+versionSmoke | nil | 26.1.1 | HeadlessMc GLFW error callback stub; vanilla 26.1.x stops in GLFWErrorScope: https://github.com/headlesshq/headlessmc/issues/472
+versionSmoke | nil | 26.1.2 | HeadlessMc GLFW error callback stub; vanilla 26.1.x stops in GLFWErrorScope: https://github.com/headlesshq/headlessmc/issues/472

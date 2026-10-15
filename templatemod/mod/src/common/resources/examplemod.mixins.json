@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.psydvl.mc.example.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "dev.psydvl.mc.example.mixinplugin.ExampleMixinPlugin",
+  "mixins": [],
+  "client": [
+    "TitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

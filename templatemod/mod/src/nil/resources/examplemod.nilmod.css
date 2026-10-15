@@ -1,0 +1,11 @@
+@nilmod {
+  /* The file name gives the mod id. */
+  name: "Example Mod";
+  description: "Example mod of the PsyMC template.";
+  authors: "psydvl";
+  version: "${version}";
+}
+
+entrypoints {
+  premain: "dev.psydvl.mc.example.nil.ExampleModNil";
+}
