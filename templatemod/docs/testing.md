@@ -101,8 +101,10 @@ it then counts as "expected". An expected release that passes is reported; remov
   for the smoke). A crash fails the release. A NeoForge release fails when FML refuses the pin jar
   (`InvalidModFileException`, missing mandatory dependencies).
 - 26.3 opens its window through SDL. HeadlessMc 3.0 (`headlessmc_version` in `gradle.properties`)
-  has the SDL stubs; 2.10 stops there (`Unable to initialize SDL`). The jar comes from the GitHub
-  releases of HeadlessMc (`headlessmc-lwjgl-<version>-no-asm.jar`): JitPack has no build of 3.0.
+  has the SDL stubs; 2.10 stops there (`Unable to initialize SDL`). The agent is
+  `io.github.headlesshq:headlessmc-lwjgl:<version>:all` from Maven Central: it has its own ASM
+  under another package, so it needs no ASM on the game classpath and does not clash with the ASM
+  of a loader.
 - `-Ploader=nil`: every release runs the nil jar of its pin (`builds_for` does not apply). A release
   counts as started only when the output has every line of `nil_smoke_markers`
   (`gradle.properties`): the lines that the patches print (`[examplemod] loaded` from
@@ -122,17 +124,9 @@ it then counts as "expected". An expected release that passes is reported; remov
   read a local variable at a return: ProGuard cuts the stack map frames, and the frame there can
   have no locals, not even `this` (see `DedicatedServerPatch`). The
   launch has its own assets directory (see `MinecraftRelease.assetsDir`). The game is offline:
-  the 401 errors of the Mojang services in the log are normal. Known open issue, not of NilLoader:
-  the headless vanilla client of 1.21.2 and 1.21.3 fails without NilLoader too. HeadlessMc stubs
-  `MemoryUtil.getAllocator(boolean)` and returns null for that interface type. 1.21.2 and 1.21.3
-  make a `Tesselator` in `RenderSystem.<clinit>`, and `ByteBufferBuilder` calls `malloc` on the null
-  allocator. 1.21.4 and later make it later. A redirection through `RedirectionApi` does not change
-  it. Reported: https://github.com/headlesshq/headlessmc/issues/471.
-  The headless vanilla client of 26.1, 26.1.1, and 26.1.2 fails without NilLoader too:
-  `GLFWErrorCallback.create` fails under the HeadlessMc stubs, and `GLFWErrorScope.close` stops the
-  game ("GLFW error callback has unexpectedly changed during this scope"); reported:
-  https://github.com/headlesshq/headlessmc/issues/472. Both are in
-  `gradle/smoke-expected.txt`. The Fabric and NeoForge launches of these releases start. `mixinCheck`, `mixinAudit`, and `serverSmoke` do not support `nil`.
+  the 401 errors of the Mojang services in the log are normal. The vanilla launch of 1.21.2, 1.21.3, and 26.1.x needs HeadlessMc 3.0.0-RC8 or later
+  (headlessmc#471, #472: the agent used the ASM of the classpath and lost some transforms).
+  `mixinCheck` and `mixinAudit` do not support `nil` (no Mixin); `nilCheck` does that job.
 - Headless NeoForge clients write `earlyWindowControl = false` into `config/fml.toml` of the game
   directory. FML ignores the system property. Its early window then runs on the HeadlessMc GL
   stubs, and on FML 6.0.18 (1.21.4) it can fail in a race (`NullPointerException` in `GlDebug`).

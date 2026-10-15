@@ -44,13 +44,6 @@ val nilLoader = configurations.create("nilLoader") {
 }
 dependencies.add("nilLoader", "com.unascribed:nilloader:${requiredProperty("nilloader_version")}")
 
-// The HeadlessMc agent reads ASM from the game classpath. Fabric and NeoForge bring one; vanilla has none.
-val headlessAsmRuntime = configurations.create("headlessAsmRuntime") {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-dependencies.add("headlessAsmRuntime", "org.ow2.asm:asm-tree:9.7")
-
 apply(from = layout.settingsDirectory.file("gradle/smoke.gradle.kts").asFile.path)
 
 val clientDir = layout.buildDirectory.dir("client").get().asFile
@@ -66,9 +59,6 @@ tasks.register<JavaExec>("runClient") {
     workingDir = clientDir
     mainClass.set(release.mainClass)
     classpath = files(release.runtimeLibraries() + release.clientJar)
-    if (!project.hasProperty("play")) {
-        classpath += headlessAsmRuntime
-    }
     // NilLoader finds the nilmods in mods/ of the working directory.
     jvmArgs("-javaagent:${nilLoader.singleFile.absolutePath}")
     args(

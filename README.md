@@ -99,10 +99,6 @@ Mojang-имена для компиляции, а в мод кладётся `ME
 
 - Пины 1.20.2–1.20.4 не поддерживаются: там `mods.toml` вместо `neoforge.mods.toml` и NeoForge
   без метаданных ModDevGradle. Релиз 1.20.5 проверяется только на Fabric.
-- Headless-ваниль 1.21.2 и 1.21.3 падает и без NilLoader: заглушка HeadlessMc возвращает `null` из
-  `MemoryUtil.getAllocator`, а эти релизы выделяют память уже в `RenderSystem.<clinit>`
-  ([headlessmc#471](https://github.com/headlesshq/headlessmc/issues/471)). Записано в
-  `gradle/smoke-expected.txt`, поэтому `versionSmoke` остаётся зелёным.
-- Headless-ваниль 26.1–26.1.2 тоже падает без NilLoader: заглушка HeadlessMc ломает
-  `GLFWErrorCallback`, а `GLFWErrorScope` в этих релизах проверяет callback
-  ([headlessmc#472](https://github.com/headlesshq/headlessmc/issues/472)). Тоже в `smoke-expected.txt`.
+- Ванильный NilLoader-лаунч 1.21.2, 1.21.3 и 26.1.x требует HeadlessMc 3.0.0-RC8+ (исправление
+  [headlessmc#471](https://github.com/headlesshq/headlessmc/issues/471) и
+  [#472](https://github.com/headlesshq/headlessmc/issues/472)).

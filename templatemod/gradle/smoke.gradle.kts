@@ -27,27 +27,15 @@ configurations {
     }
 }
 
-// HeadlessMc publishes the LWJGL jar as a GitHub release asset: headlessmc-lwjgl-<version>-no-asm.jar.
+// HeadlessMc is on Maven Central since 3.0.0-RC8.
 repositories {
-    ivy {
-        name = "HeadlessMc releases"
-        url = uri("https://github.com/headlesshq/headlessmc/releases/download")
-        patternLayout {
-            artifact("[revision]/[module]-[revision]-[classifier].[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-        content {
-            includeGroup("headlesshq")
-        }
-    }
+    mavenCentral()
 }
 
 dependencies {
-    // The dev jar does not shade ASM. Fabric already has one ASM on the game classpath.
-    // A second copy inside the agent jar makes Fabric Loader refuse to start.
-    add("headlessLwjgl", "headlesshq:headlessmc-lwjgl:${property("headlessmc_version")}:no-asm") { isTransitive = false }
+    // The all jar has its own ASM under another package. So it does not clash with the ASM of a
+    // loader, and the vanilla game (no ASM of its own) needs nothing more.
+    add("headlessLwjgl", "io.github.headlesshq:headlessmc-lwjgl:${property("headlessmc_version")}:all") { isTransitive = false }
     // The hidden window agent loads this ASM in its own class loader.
     add("headlessAsm", "org.ow2.asm:asm:9.7")
 }
@@ -157,8 +145,8 @@ extra["configureHeadlessClient"] = HeadlessClient { task ->
             "Premain-Class: psymc.agent.ModuleReadsAgent\nCan-Retransform-Classes: true\nCan-Redefine-Classes: true\n",
             emptyList(),
         )
-        // The LWJGL agent stays a normal javaagent.
-        // The boot classpath cannot see the game ASM, so the transform would be skipped.
+        // The LWJGL agent is a normal javaagent: its jar goes on the system class path, where the
+        // transformed LWJGL classes find the redirections.
         // JVM --add-reads does not apply: NeoForge creates the LWJGL modules after startup.
         // The reads agent adds that edge when the LWJGL class loads.
         task.jvmArgs(
