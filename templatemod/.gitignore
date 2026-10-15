@@ -2,6 +2,8 @@
 .local/
 
 build/
+# The CI action directory is not build output.
+!/.github/actions/build/
 .gradle/
 .kotlin/
 .jdk/

@@ -1,0 +1,76 @@
+name: Build and check the mod
+description: Format check, compile every pin, jars, mixinCheck and serverSmoke on each loader, nilCheck, reports.
+
+inputs:
+  directory:
+    description: The mod directory, relative to the repository root.
+    default: .
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v6
+      with:
+        distribution: temurin
+        # The last version is the Gradle JDK. Gradle finds the others as toolchains.
+        java-version: |
+          21
+          25
+    - uses: gradle/actions/setup-gradle@v5
+    - name: Gradle setup
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      # The smoke tasks start nested Gradle runs. They read the toolchains from this file too.
+      run: |
+        chmod +x ./gradlew
+        mkdir -p ~/.gradle
+        echo "org.gradle.java.installations.fromEnv=JAVA_HOME_21_X64,JAVA_HOME_25_X64" >> ~/.gradle/gradle.properties
+        echo "GRADLE_OPTS=--enable-native-access=ALL-UNNAMED" >> "$GITHUB_ENV"
+    - name: Format check
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew spotlessCheck --console=plain
+    - name: Compile all pins
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew compileAll --console=plain
+    - name: Jars
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew mergeJars --console=plain
+    - name: Mixin check, Fabric
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew mixinCheck -Ploader=fabric --console=plain
+    - name: Mixin check, NeoForge
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew mixinCheck -Ploader=neoforge --console=plain
+    - name: Server smoke, Fabric
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew serverSmoke -Ploader=fabric --console=plain
+    - name: Server smoke, NeoForge
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      run: ./gradlew serverSmoke -Ploader=neoforge --console=plain
+    - name: NilLoader checks
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      # NilLoader is optional: only when gradle.properties lists nil in loaders.
+      run: |
+        if grep -Eq "^loaders=.*\bnil\b" gradle.properties; then
+          ./gradlew nilCheck --console=plain
+          ./gradlew serverSmoke -Ploader=nil --console=plain
+        fi
+    - uses: actions/upload-artifact@v7
+      with:
+        name: jars
+        path: |
+          ${{ inputs.directory }}/mod/versions/*/*/build/libs/*.jar
+          ${{ inputs.directory }}/mod/versions/*/build/forgix/*.jar
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: reports
+        path: ${{ inputs.directory }}/build/version-smoke/
