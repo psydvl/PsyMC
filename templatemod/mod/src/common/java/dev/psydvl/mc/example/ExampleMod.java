@@ -22,7 +22,9 @@ public final class ExampleMod {
   }
 
   // The title screen mixin calls this. A play run shows the line in the log.
+  // The game calls TitleScreen.init again after each window resize. Thus the line can show more
+  // than once.
   public static void onTitleScreen() {
-    LOGGER.info("[{}] title screen opened", MOD_ID);
+    LOGGER.info("[{}] title screen init", MOD_ID);
   }
 }
